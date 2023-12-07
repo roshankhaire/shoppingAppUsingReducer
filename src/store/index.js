@@ -49,17 +49,22 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const uiSlice=createSlice({
     name:"ui",
-    initialState:{cartIsVisible:false},
+    initialState:{cartIsVisible:false ,notification:null},
+    // error:null,
+    loading:"",
+    successful:"",
     reducers:{
         toggle(state){
             state.cartIsVisible=!state.cartIsVisible
-        }
+        },
+       
     }
+    
 })
 const store=configureStore({
           reducer:{ ui:uiSlice.reducer,
         cart:cartSlice.reducer}
 })
 export const cartActions=cartSlice.actions
-export const uiActions=uiSlice.actions
+export const uisAction=uiSlice.actions
 export default store
