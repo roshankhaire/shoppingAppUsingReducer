@@ -4,43 +4,41 @@ import { useSelector} from 'react-redux';
 import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
 import { useDispatch } from 'react-redux';
-import {uisAction }from "./store/index"
+import { uisAction } from './store';
+import { sendCartData } from './store';
 import { Fragment } from 'react';
+import { fetchCartData } from './store';
+import Notification from "./components/UI/Notification"
+let isInitial=true
 function App() {
   const showCart=useSelector(state=>state.ui.cartIsVisible)
+  const notification=useSelector(state=>state.ui.notication)
   const cart=useSelector(state=>state.cart)
-  //const notification=useSelector(state=>state.ui.notification)
-  const notification=useSelector(state=>state.ui.loading)
-  const successful=useSelector(state=>state.ui.successful)
-  console.log(notification)
   const dispatch=useDispatch()
   useEffect(()=>{
-    const sendCartData= async()=>{
-     
-        const response=await fetch("https://shoping-app-using-reducers-default-rtdb.firebaseio.com/cart.json",{
-          method:'PUT',
-          body:JSON.stringify(cart),
-        })
-        if(!response.ok){
-          throw new Error("request is failed")
-        }
-       
-     
-     
-      const responseData=response.json()
+    dispatch(fetchCartData())
+  },[dispatch])
+  useEffect(()=>{
+    if(isInitial){
+      isInitial=false
+      return
+    }
+   dispatch(sendCartData(cart))
+  
      
     
-    }
-     
-  },[cart])
+   
+  },[cart,dispatch])
   return (
     <Fragment>
+      {notification && (<Notification status={notification.status} 
+      title={notification.title}  message={notification.message}/>)}
     <Layout>
-      {notification && <p> loading</p>}
-      { !notification && showCart && <p>loading</p>  &&<Cart />}
-      { notification && showCart && <Cart />}
+    
+      { showCart && <Cart />}
       <Products />
     </Layout>
+   
     </Fragment>
   );
 }
